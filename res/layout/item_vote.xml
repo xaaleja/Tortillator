@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageView
+        android:id="@+id/vo_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="7dp"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/vo_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="6dp"
+        android:layout_toRightOf="@id/vo_image"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/vo_price_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vo_bar"
+        android:layout_alignTop="@+id/vo_your_rating"
+        android:text="@string/price" 
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/vo_average"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/vo_average_info"
+        android:layout_alignBottom="@+id/vo_average_info"
+        android:layout_toRightOf="@+id/vo_average_info"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/vo_your_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/vo_bar"
+        android:layout_marginRight="22dp"
+        android:text="6"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/vo_average_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/vo_price_info"
+        android:layout_below="@+id/vo_price_info"
+        android:text="@string/average" 
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/vo_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/vo_average"
+        android:layout_toRightOf="@+id/vo_price_info"
+        android:text="TextView" />
+
+</RelativeLayout>

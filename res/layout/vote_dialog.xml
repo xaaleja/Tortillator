@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/vo_di_give_vote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/give_vote"
+        android:textSize="20sp" />
+
+    <RatingBar
+        android:id="@+id/bar_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/vo_di_give_vote"
+        android:layout_marginTop="17dp" />
+
+    <TextView
+        android:id="@+id/vo_di_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/bar_rating_bar"
+        android:layout_marginTop="28dp"
+        android:text="@string/share"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/vo_di_accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/vo_di_share"
+        android:layout_below="@+id/vo_di_share"
+        android:layout_marginTop="26dp"
+        android:text="Button" />
+
+</RelativeLayout>

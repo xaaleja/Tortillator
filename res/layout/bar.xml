@@ -1,0 +1,154 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bar_change_vote_button"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".BarActivity" >
+
+    <EditText
+        android:id="@+id/bar_commentT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bar_comment"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bar_comment"
+        android:ems="10" >
+    </EditText>
+
+    <ListView
+        android:id="@+id/bar_comments_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bar_commentT"
+        android:layout_below="@+id/bar_save_button" >
+    </ListView>
+
+    <Button
+        android:id="@+id/bar_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/bar_commentT"
+        android:layout_below="@+id/bar_commentT"
+        android:onClick="onClickSave"
+        android:text="@string/bar_button" />
+
+    <TextView
+        android:id="@+id/bar_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/bar_image"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/bar_image"
+        android:text="TextView"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/bar_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:onClick="onClickImage"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/bar_cityT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar_addressT"
+        android:layout_toRightOf="@+id/bar_image"
+        android:text="TextView"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/bar_averageN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bar_rating_bar"
+        android:layout_below="@+id/bar_rating_bar"
+        android:layout_marginTop="14dp"
+        android:text="TextView"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bar_addressT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar_name"
+        android:layout_toRightOf="@+id/bar_image"
+        android:text="TextView"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/bar_scheduleT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bar_cityT"
+        android:layout_below="@+id/bar_cityT"
+        android:text="TextView"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/bar_provinceT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar_addressT"
+        android:layout_toRightOf="@+id/bar_cityT"
+        android:text="TextView"
+        android:textSize="12sp" />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/bar_comment"
+        android:layout_alignLeft="@+id/bar_comment"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/bar_average_tot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/bar_averageN"
+        android:layout_alignBottom="@+id/bar_averageN"
+        android:layout_toRightOf="@+id/bar_averageN"
+        android:text="@string/total" />
+
+    <RatingBar
+        android:id="@+id/bar_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bar_image"
+        android:layout_below="@+id/bar_image"
+        android:maxHeight="55dip"
+        android:minHeight="55dip"
+        android:numStars="5"
+        android:rating="0"
+        android:stepSize="0.5" />
+
+    <TextView
+        android:id="@+id/bar_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/bar_averageN"
+        android:layout_below="@+id/bar_averageN"
+        android:layout_marginTop="10dp"
+        android:text="@string/bar_comment"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/bar_num_votes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bar_comment"
+        android:layout_toRightOf="@+id/bar_average_tot"
+        android:text="TextView" />
+
+</RelativeLayout>
