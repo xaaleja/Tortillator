@@ -7,13 +7,15 @@ import android.os.Parcelable;
 
 public class Comment implements Parcelable
 {
+	private int id;
 	private int id_tortilla;
 	private String username;
 	private Date datetime;
 	private String text;
 	
-	public Comment(String username, int id_tortilla, Date datetime, String text)
+	public Comment(int id, String username, int id_tortilla, Date datetime, String text)
 	{
+		this.id = id;
 		this.id_tortilla = id_tortilla;
 		this.username = username;
 		this.datetime = datetime;
@@ -25,6 +27,14 @@ public class Comment implements Parcelable
 		readFromParcel(in);
 	}
 	
+	public int getId()
+	{
+		return id;
+	}
+	public void setId(int id)
+	{
+		this.id = id;
+	}
 
 	public int getId_tortilla() {
 		return id_tortilla;
@@ -67,6 +77,7 @@ public class Comment implements Parcelable
 	@Override
 	public void writeToParcel(Parcel dest, int flags) 
 	{
+		dest.writeInt(this.id);
 		dest.writeString(this.username);
 		dest.writeInt(this.id_tortilla);
 		dest.writeSerializable(this.datetime);
@@ -75,6 +86,7 @@ public class Comment implements Parcelable
 	
 	public void readFromParcel(Parcel in) 
 	{
+		this.id = in.readInt();
 		this.username = in.readString();
 		this.id_tortilla = in.readInt();
 		this.datetime = (Date)in.readSerializable();

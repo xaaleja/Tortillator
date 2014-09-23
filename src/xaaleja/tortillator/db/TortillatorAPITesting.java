@@ -31,6 +31,7 @@ import xaaleja.tortillator.model.Tortilla;
 import xaaleja.tortillator.model.User;
 import xaaleja.tortillator.model.Vote;
 import xaaleja.tortillator.parser.BarParser;
+import xaaleja.tortillator.parser.CommentParser;
 import xaaleja.tortillator.parser.TortillaParser;
 import xaaleja.tortillator.parser.UserParser;
 import xaaleja.tortillator.utils.APIRoutes;
@@ -244,7 +245,7 @@ public class TortillatorAPITesting
 	}
 	public int getUserRating(String username, int id_tortilla)
 	{
-		int rating = 0;
+		int rating = -1;
 		String route = APIRoutes.GET_OR_PUT_VOTE+id_tortilla+"-"+username+"/user/rating.json";
 		
 		HttpGet httpget = new HttpGet(route);
@@ -296,8 +297,30 @@ public class TortillatorAPITesting
 		return tortilla;
 	}
 	public ArrayList<Comment> getComments(int id_tortilla)
-	{
+	{		
 		ArrayList<Comment> comments = new ArrayList<Comment>();
+		String route = APIRoutes.GET_OR_PUT_COMMENT + id_tortilla + "/tortilla.json";
+		
+		HttpGet httpget = new HttpGet(route);
+		String result = null;
+		
+		HttpResponse response;
+		try
+		{
+			response = client.execute(httpget, context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONArray json = new JSONArray(result);
+				comments = CommentParser.parseComments(json);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		return comments;
 	}
 	public void updateTortillaAverage(int id_tortilla)
@@ -310,7 +333,26 @@ public class TortillatorAPITesting
 	}
 	public int getNumVotes(int id_tortilla)
 	{
-		return 0;
+		int numVotes = 0;
+		String route = APIRoutes.GET_OR_PUT_VOTE+id_tortilla+"/number.json";
+		
+		HttpGet httpget = new HttpGet(route);
+		String result=null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			String num = Utils.clean(result);
+			numVotes = Integer.parseInt(num);
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
+		
+		return numVotes;
 	}
 	public ArrayList<Tortilla> getRanking()
 	{

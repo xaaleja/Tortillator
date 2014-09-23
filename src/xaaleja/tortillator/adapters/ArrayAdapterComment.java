@@ -38,7 +38,7 @@ public class ArrayAdapterComment extends ArrayAdapter<Comment>
 		
 		TextView dateView = (TextView)vi.findViewById(R.id.com_date);
 		Date date = arrayComments.get(position).getDatetime();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd - HH:mm");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd - HH:mm");
 
 		dateView.setText(dateFormat.format(date));
 		

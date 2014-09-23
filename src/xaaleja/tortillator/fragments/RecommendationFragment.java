@@ -43,6 +43,10 @@ SearchView.OnCloseListener
 	private HashMap<Integer, String> bars = new HashMap<Integer, String>();
 
 
+	public RecommendationFragment()
+	{
+		
+	}
 	public RecommendationFragment(User user, Activity activity)
 	{
 		this.user = user;

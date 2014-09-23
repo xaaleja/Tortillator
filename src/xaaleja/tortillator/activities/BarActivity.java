@@ -5,7 +5,9 @@ import java.util.Date;
 
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.adapters.ArrayAdapterComment;
+import xaaleja.tortillator.adapters.ArrayAdapterTortilla;
 import xaaleja.tortillator.db.TortillatorAPI;
+import xaaleja.tortillator.db.TortillatorAPITesting;
 import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.Comment;
 import xaaleja.tortillator.model.Tortilla;
@@ -37,6 +39,8 @@ public class BarActivity extends Activity {
 	private ArrayList<Comment> arrayComments;
 	private ArrayAdapterComment aac;
 	private Integer yourRating;
+	private RatingBar ratingBar;
+	private TextView numVotes;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +67,50 @@ public class BarActivity extends Activity {
 		TextView schedule = (TextView)findViewById(R.id.bar_scheduleT);
 		schedule.setText(" "+bar.getSchedule());
 		
-		yourRating = TortillatorAPI.getInstance(BarActivity.this).getUserRating(user.getUsername(), tortilla.getId());
-		RatingBar ratingBar = (RatingBar)findViewById(R.id.bar_rating_bar);
+		this.comments = (ListView)findViewById(R.id.bar_comments_list);
+		ratingBar = (RatingBar)findViewById(R.id.bar_rating_bar);
+		numVotes = (TextView)findViewById(R.id.bar_num_votes);
+		
+		/*******/
+		Thread tr = new Thread(){
+			@Override
+			public void run()
+			{
+				yourRating = TortillatorAPITesting.getInstance().getUserRating(user.getUsername(), tortilla.getId());
+				final int num = TortillatorAPITesting.getInstance().getNumVotes(tortilla.getId());
+				arrayComments = TortillatorAPITesting.getInstance().getComments(tortilla.getId());
+				BarActivity.this.runOnUiThread(
+						new Runnable() {
+							public void run() 
+							{
+								if(yourRating!=-1)
+								{
+									Float ratingFloat = Float.parseFloat(""+yourRating);
+									ratingBar.setRating(ratingFloat/2);
+								}
+								numVotes.setText(" (" + num+ " votes)");
+								aac = new ArrayAdapterComment(BarActivity.this, arrayComments);
+								comments.setAdapter(aac);
+							}
+						});
+			}
+		};
+		tr.start();
+		/*****/
+		
+		
+		//yourRating = TortillatorAPI.getInstance(BarActivity.this).getUserRating(user.getUsername(), tortilla.getId());
+		/*RatingBar ratingBar = (RatingBar)findViewById(R.id.bar_rating_bar);
 		if(yourRating!=-1)
 		{
 			Float ratingFloat = Float.parseFloat(""+yourRating);
 			ratingBar.setRating(ratingFloat/2);
-		}
-		final TextView numVotes = (TextView)findViewById(R.id.bar_num_votes);
-		numVotes.setText(" (" + TortillatorAPI.getInstance(this).getNumVotes(tortilla.getId()) + " votes)");
-		this.comments = (ListView)findViewById(R.id.bar_comments_list);
-		arrayComments = TortillatorAPI.getInstance(this).getComments(tortilla.getId());
-		aac = new ArrayAdapterComment(this, arrayComments);
-		comments.setAdapter(aac);
+		}*/
+		//final TextView numVotes = (TextView)findViewById(R.id.bar_num_votes);
+		//numVotes.setText(" (" + TortillatorAPI.getInstance(this).getNumVotes(tortilla.getId()) + " votes)");
+		//arrayComments = TortillatorAPI.getInstance(this).getComments(tortilla.getId());
+		//aac = new ArrayAdapterComment(this, arrayComments);
+		//comments.setAdapter(aac);
 		
 		ratingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener() 
 		{
@@ -110,7 +145,7 @@ public class BarActivity extends Activity {
 			EditText commentText = (EditText)findViewById(R.id.bar_commentT);	
 			if(!commentText.getText().toString().isEmpty())
 			{
-				Comment comment = new Comment(user.getUsername(), tortilla.getId(), new Date(), commentText.getText().toString());
+				Comment comment = new Comment(5, user.getUsername(), tortilla.getId(), new Date(), commentText.getText().toString());
 				arrayComments.add(0, comment);
 				aac.notifyDataSetChanged();
 				TortillatorAPI.getInstance(BarActivity.this).newComment(comment);

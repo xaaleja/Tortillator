@@ -320,7 +320,7 @@ public class TortillatorAPI extends SQLiteOpenHelper
 		db.close();
 		return tortilla;
 	}
-	public ArrayList<Comment> getComments(int id_tortilla)
+	/*public ArrayList<Comment> getComments(int id_tortilla)
 	{
 		ArrayList<Comment> arrayComments = new ArrayList<Comment>();
 		db = this.getReadableDatabase();
@@ -337,7 +337,7 @@ public class TortillatorAPI extends SQLiteOpenHelper
 		}
 		db.close();
 		return arrayComments;
-	}
+	}*/
 	public void updateTortillaAverage(int id_tortilla)
 	{
 		db = this.getWritableDatabase();

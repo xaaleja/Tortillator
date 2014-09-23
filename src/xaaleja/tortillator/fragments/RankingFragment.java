@@ -35,8 +35,11 @@ SearchView.OnCloseListener
 	private HashMap<Integer, String> bars = new HashMap<Integer, String>();
 	private ArrayList<Tortilla> arrayRanking = new ArrayList<Tortilla>();
 
-
 	
+	public RankingFragment()
+	{
+		
+	}
 	public RankingFragment(User user, Activity activity)
 	{
 		this.user = user;
@@ -130,7 +133,8 @@ SearchView.OnCloseListener
 		this.aar.clear();
 	}
 	@Override
-	public boolean onClose() {
+	public boolean onClose() 
+	{
 	    aar.filter("");
 	    return(true);
 	}

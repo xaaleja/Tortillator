@@ -34,7 +34,10 @@ public class GeolocationFragment extends Fragment
 	private static final String myLocationTitle = "My location";
 	private GoogleMap googleMap;
 	
-	
+	public GeolocationFragment()
+	{
+		
+	}
 	public GeolocationFragment(User user, Activity activity)
 	{
 		this.user = user;
