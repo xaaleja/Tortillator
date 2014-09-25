@@ -11,10 +11,12 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -34,6 +36,7 @@ import xaaleja.tortillator.parser.BarParser;
 import xaaleja.tortillator.parser.CommentParser;
 import xaaleja.tortillator.parser.TortillaParser;
 import xaaleja.tortillator.parser.UserParser;
+import xaaleja.tortillator.parser.VoteParser;
 import xaaleja.tortillator.utils.APIRoutes;
 import xaaleja.tortillator.utils.Utils;
 import android.util.Log;
@@ -174,6 +177,7 @@ public class TortillatorAPITesting
 	}
 	public String newVote(Vote vote)
 	{	
+		//The tortilla's average has to be updated
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("idTortilla", Integer.toString(vote.getId_tortilla())));
 		params.add(new BasicNameValuePair("user", vote.getUsername()));
@@ -257,8 +261,10 @@ public class TortillatorAPITesting
 			
 			HttpEntity entity = response.getEntity();
 			result = EntityUtils.toString(entity, "UTF-8");			
-
-			rating = Integer.parseInt(result);
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				rating = Integer.parseInt(result);
+			}
 		} catch (Exception e) 
 		{
 			e.printStackTrace();
@@ -294,6 +300,25 @@ public class TortillatorAPITesting
 	public Tortilla getTortilla(int id)
 	{
 		Tortilla tortilla = new Tortilla();
+		String route = APIRoutes.GET_OR_PUT_TORTILLA+id+".json";
+		
+		HttpGet httpget = new HttpGet(route);
+		String result = null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			Log.i("JSON", ""+response.getStatusLine().getStatusCode());
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			JSONObject json= new JSONObject(result);
+			tortilla = TortillaParser.parse(json);
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
 		return tortilla;
 	}
 	public ArrayList<Comment> getComments(int id_tortilla)
@@ -325,11 +350,40 @@ public class TortillatorAPITesting
 	}
 	public void updateTortillaAverage(int id_tortilla)
 	{
+		ArrayList<Vote> votes = this.getTortillasVotes(id_tortilla);
+		int numVotes = this.getNumVotes(id_tortilla);
+		float avg = 0;
+		for(Vote v: votes)
+		{
+			avg = avg + v.getVote();
+		}
+		
+		Tortilla tortilla = this.getTortilla(id_tortilla);
+		tortilla.setAverage(avg/numVotes);
+		Log.i("UPDATE AVERAGE", ""+avg/numVotes);
+		
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("price", Float.toString(tortilla.getPrice())));
+		params.add(new BasicNameValuePair("average", Float.toString(tortilla.getAverage())));
+		params.add(new BasicNameValuePair("image", tortilla.getImage()));
+		params.add(new BasicNameValuePair("idBar", Integer.toString(tortilla.getId_bar())));
 	
+		String route = APIRoutes.GET_OR_PUT_TORTILLA+id_tortilla+".json";
+		this.put(params, route);
+
+		//return this.put(params, route);
 	}
 	public void updateVote(Vote vote)
 	{
-		
+		//The tortilla's average has to be updated
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("idTortilla", Integer.toString(vote.getId_tortilla())));
+		params.add(new BasicNameValuePair("user", vote.getUsername()));
+		params.add(new BasicNameValuePair("rating", Integer.toString(vote.getVote())));
+	
+		String route = APIRoutes.GET_OR_PUT_VOTE+vote.getId_tortilla() +"-"+vote.getUsername()+".json";
+		this.put(params, route);
+		//return this.put(params, route);
 	}
 	public int getNumVotes(int id_tortilla)
 	{
@@ -407,19 +461,108 @@ public class TortillatorAPITesting
 		return tortillas;
 	}
 	public ArrayList<Bar> getBarsNearsLocation(LatLng location)	
-	{
+	{		
 		ArrayList<Bar> bars = new ArrayList<Bar>();
+		String route = APIRoutes.GET_OR_PUT_BAR+location.latitude+"/latitudes/"+location.longitude+"/longitude.json";
+		HttpGet httpget = new HttpGet(route);
+		String result=null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONArray json= new JSONArray(result);
+				bars = BarParser.parseBars(json);
+			}
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
+		
 		return bars;
 	}
 	public Bar getBarByName(String barName)
 	{
+		barName = barName.replace(" ", "");
 		Bar bar = new Bar();
+		String route = APIRoutes.GET_OR_PUT_BAR+barName+"/by/slug.json";
+		
+		HttpGet httpget = new HttpGet(route);
+		String result = null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONObject json= new JSONObject(result);
+				bar = BarParser.parse(json);
+			}
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
 		return bar;
 	}
 	public Tortilla getTortillaByBarId(int id)
 	{
 		Tortilla tortilla = new Tortilla();
+		String route = APIRoutes.GET_OR_PUT_TORTILLA+id+"/by/bar.json";
+		
+		HttpGet httpget = new HttpGet(route);
+		String result = null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONObject json= new JSONObject(result);
+				tortilla = TortillaParser.parse(json);
+			}
+			
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
 		return tortilla;
+	}
+	public ArrayList<Vote> getTortillasVotes(int id)
+	{
+		ArrayList<Vote> votes = new ArrayList<Vote>();
+		String route = APIRoutes.GET_OR_PUT_VOTE+id+"/tortillas.json";
+		HttpGet httpget = new HttpGet(route);
+		String result=null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONArray json= new JSONArray(result);
+				votes = VoteParser.parseVotes(json);
+			}
+		} catch (Exception e) 
+		{
+			Log.e("ERROR VOTES", e.toString());
+			e.printStackTrace();
+		}	
+		
+		return votes;		
 	}
 	private String post(List<NameValuePair> params, String route)
 	{
@@ -447,6 +590,47 @@ public class TortillatorAPITesting
 		}
 
 		return this.getResponse();
+	}
+	private void put(List<NameValuePair> params, String route)
+	{
+		HttpPut httpPut = new HttpPut(route);
+		HttpResponse response = null;
+		
+		try {
+			httpPut.setEntity(new UrlEncodedFormEntity(params));
+			response = client.execute(httpPut);
+
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*try
+		{	
+			httpPut.setEntity(new UrlEncodedFormEntity(params));
+			response = client.execute(httpPut);
+			//HttpEntity entity = response.getEntity();
+			//is = entity.getContent();
+		} 
+		catch (UnsupportedEncodingException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IllegalStateException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+
+		return this.getResponse();*/ catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	private String getResponse()
 	{

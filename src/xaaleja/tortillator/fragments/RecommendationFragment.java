@@ -6,8 +6,6 @@ import java.util.Locale;
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.activities.BarActivity;
 import xaaleja.tortillator.adapters.ArrayAdapterRecommendations;
-import xaaleja.tortillator.adapters.ArrayAdapterTortilla;
-import xaaleja.tortillator.db.TortillatorAPI;
 import xaaleja.tortillator.db.TortillatorAPITesting;
 import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.Tortilla;

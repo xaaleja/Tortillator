@@ -4,7 +4,9 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.Tortilla;
 
 public class TortillaParser 
@@ -24,5 +26,16 @@ public class TortillaParser
 		}
 		return tortillas;
 		
+	}
+	
+	public static Tortilla parse(JSONObject json) throws JSONException
+	{
+			Tortilla t = new Tortilla(json.getInt("id"), 
+					(float)json.getDouble("price"), 
+					(float)json.getDouble("average"), 
+					json.getString("image"), 
+					json.getInt("id_bar"));
+     
+		return t;
 	}
 }

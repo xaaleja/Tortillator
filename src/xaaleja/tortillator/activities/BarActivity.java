@@ -5,8 +5,6 @@ import java.util.Date;
 
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.adapters.ArrayAdapterComment;
-import xaaleja.tortillator.adapters.ArrayAdapterTortilla;
-import xaaleja.tortillator.db.TortillatorAPI;
 import xaaleja.tortillator.db.TortillatorAPITesting;
 import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.Comment;
@@ -18,6 +16,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,7 +118,39 @@ public class BarActivity extends Activity {
 			public void onRatingChanged(RatingBar ratingBar, float rating,
 					boolean fromUser) 
 			{
-				Vote vote = new Vote(user.getUsername(), tortilla.getId(), (int)(rating*2), new Date());
+				Log.e("ERROR RATING BAR", "ENTRA");
+				final float rat = rating;
+				Thread tr = new Thread(){
+					@Override
+					public void run()
+					{
+						Vote vote = new Vote(user.getUsername(), tortilla.getId(), (int)(rat*2), new Date());
+
+						if(yourRating !=-1)
+						{
+							TortillatorAPITesting.getInstance().updateVote(vote);
+						}
+						else
+						{
+							TortillatorAPITesting.getInstance().newVote(vote);
+						}
+						TortillatorAPITesting.getInstance().updateTortillaAverage(tortilla.getId());
+						tortilla = TortillatorAPITesting.getInstance().getTortilla(tortilla.getId());
+						final int num = TortillatorAPITesting.getInstance().getNumVotes(tortilla.getId());
+						BarActivity.this.runOnUiThread(
+								new Runnable() {
+									public void run() 
+									{
+										average.setText(" "+String.format("%.1f", tortilla.getAverage()));
+										numVotes.setText(" (" + num + " votes)");
+
+									}
+								});
+					}
+				};
+				tr.start();
+				
+				/*Vote vote = new Vote(user.getUsername(), tortilla.getId(), (int)(rating*2), new Date());
 				if(yourRating !=-1)
 				{
 					TortillatorAPI.getInstance(BarActivity.this).updateVote(vote);
@@ -127,10 +158,10 @@ public class BarActivity extends Activity {
 				else
 				{
 					TortillatorAPI.getInstance(BarActivity.this).newVote(vote);
-				}
-				tortilla = TortillatorAPI.getInstance(BarActivity.this).getTortilla(tortilla.getId());
-				average.setText(" "+String.format("%.1f", tortilla.getAverage()));
-				numVotes.setText(" (" + TortillatorAPI.getInstance(BarActivity.this).getNumVotes(tortilla.getId()) + " votes)");
+				}*/
+				//tortilla = TortillatorAPI.getInstance(BarActivity.this).getTortilla(tortilla.getId());
+				//average.setText(" "+String.format("%.1f", tortilla.getAverage()));
+				//numVotes.setText(" (" + TortillatorAPI.getInstance(BarActivity.this).getNumVotes(tortilla.getId()) + " votes)");
 
 			}
 		});
@@ -142,14 +173,37 @@ public class BarActivity extends Activity {
 	{
 		if(v.getId() == R.id.bar_save_button)
 		{
-			EditText commentText = (EditText)findViewById(R.id.bar_commentT);	
+			final EditText commentText = (EditText)findViewById(R.id.bar_commentT);	
 			if(!commentText.getText().toString().isEmpty())
 			{
-				Comment comment = new Comment(5, user.getUsername(), tortilla.getId(), new Date(), commentText.getText().toString());
+				Thread tr = new Thread(){
+					@Override
+					public void run()
+					{
+						Comment comment = new Comment(5, user.getUsername(), tortilla.getId(), new Date(), commentText.getText().toString());
+						arrayComments.add(0, comment);
+						TortillatorAPITesting.getInstance().newComment(comment);
+
+						BarActivity.this.runOnUiThread(
+								new Runnable() {
+									public void run() 
+									{
+										commentText.setText("");
+										aac.notifyDataSetChanged();
+
+
+									}
+								});
+					}
+				};
+				tr.start();
+				
+				
+				/*Comment comment = new Comment(5, user.getUsername(), tortilla.getId(), new Date(), commentText.getText().toString());
 				arrayComments.add(0, comment);
 				aac.notifyDataSetChanged();
 				TortillatorAPI.getInstance(BarActivity.this).newComment(comment);
-				commentText.setText("");
+				commentText.setText("");*/
 			}
 			else
 			{

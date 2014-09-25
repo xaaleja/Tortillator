@@ -12,7 +12,7 @@ public class Utils
 	public static String cleanDate(String date)
 	{
 		String sub = date.substring(0, 19);
-		sub = sub.substring(0, 10) + " - " + sub.substring(11, 15);
+		sub = sub.substring(0, 10) + " - " + sub.substring(11, 16);
 		Log.i("DATE COMMENT", sub);
 		return sub;
 	}

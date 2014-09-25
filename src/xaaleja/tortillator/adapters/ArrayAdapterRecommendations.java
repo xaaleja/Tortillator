@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import xaaleja.tortillator.R;
-import xaaleja.tortillator.db.TortillatorAPI;
 import xaaleja.tortillator.model.Tortilla;
 import xaaleja.tortillator.utils.UtilsImages;
 import android.app.Activity;
