@@ -61,7 +61,10 @@ public class GeolocationFragment extends Fragment
 	public void onResume() 
 	{
 		super.onResume();
-		
+		if(googleMap == null)
+		{
+			googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap(); 
+		}
 
 			final BitmapDescriptor myLocationColour = BitmapDescriptorFactory.defaultMarker(
 			          BitmapDescriptorFactory.HUE_AZURE);
