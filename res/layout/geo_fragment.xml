@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ProgressBar
+        android:id="@+id/geolocationProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+    <RadioGroup
+        android:id="@+id/showBarsRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/geolocationProgressBar"
+        android:layout_marginTop="45dp"
+        android:visibility="invisible" >
+
+        <RadioButton
+            android:id="@+id/showAllBars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="All bars" />
+
+        <RadioButton
+            android:id="@+id/showRecommendedBarsRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recommended bars" />
+
+        <RadioButton
+            android:id="@+id/showVotedBarsRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bars I have voted" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/ShowMapButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/geolocationProgressBar"
+        android:layout_alignTop="@+id/geolocationProgressBar"
+        android:layout_marginLeft="34dp"
+        android:layout_marginTop="50dp"
+        android:text="Show"
+        android:visibility="invisible" />
+
+</RelativeLayout>

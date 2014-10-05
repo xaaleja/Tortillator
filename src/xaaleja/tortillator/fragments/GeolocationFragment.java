@@ -1,39 +1,51 @@
 package xaaleja.tortillator.fragments;
 
+
 import java.util.ArrayList;
 
 import xaaleja.tortillator.R;
-import xaaleja.tortillator.activities.BarActivity;
+import xaaleja.tortillator.activities.GeolocationActivity;
 import xaaleja.tortillator.db.TortillatorAPITesting;
 import xaaleja.tortillator.model.Bar;
-import xaaleja.tortillator.model.Tortilla;
 import xaaleja.tortillator.model.User;
+import xaaleja.tortillator.utils.ToastWriter;
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-public class GeolocationFragment extends Fragment
+
+public class GeolocationFragment extends Fragment implements LocationListener
 {
 	private User user;
 	private Activity activity;
-	private static final LatLng MY_LOCATION = new LatLng(43.326729, -3.032551);	   
-	private static final String myLocationTitle = "My location";
-	private GoogleMap googleMap;
+	private RadioGroup radioGroup;
+	private View rootView;
+	private Button showMapButton;
+	private ProgressBar showProgressBar;
 	
+	private int precisionOptima=20;
+	private double latitude;
+	private double longitude;
+	//= new LatLng(43.326729, -3.032551)
+	private LocationManager lm;
+	private int precisionMinimaRequerida =50;
+	
+	private ArrayList<Bar> bars;
+
 	public GeolocationFragment()
 	{
 		
@@ -43,119 +55,188 @@ public class GeolocationFragment extends Fragment
 		this.user = user;
 		this.activity = activity;
 	}
-	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState)
 	{
-
-		View rootView = inflater.inflate(R.layout.geolocation_fragment, container,false);
-		if(googleMap == null)
-		{
-			googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap(); 
-		}
+		rootView = inflater.inflate(R.layout.geo_fragment, container,
+				false);
+		this.radioGroup = (RadioGroup)rootView.findViewById(R.id.showBarsRadioGroup);
+		this.showMapButton = (Button)rootView.findViewById(R.id.ShowMapButton);
+		this.showProgressBar = (ProgressBar)rootView.findViewById(R.id.geolocationProgressBar);
+		this.lm = (LocationManager) activity.getSystemService(activity.LOCATION_SERVICE);
+		
+		this.showMapButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				if(v.getId() == R.id.ShowMapButton)
+				{
+					final LatLng latlng = new LatLng(latitude, longitude);
+					
+					Thread tr = new Thread(){
+						@Override
+						public void run()
+						{
+							
+							switch (radioGroup.getCheckedRadioButtonId()) {
+							case R.id.showAllBars:
+								bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+								break;
+							case R.id.showRecommendedBarsRadio:
+								//TortillatorAPITesting.getInstance().getRecommendations(user.getUsername());						
+								bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+								break;
+							case R.id.showVotedBarsRadio:
+								//TortillatorAPITesting.getInstance().getUsersTortillas(user.getUsername());
+								bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+								break;
+							default:
+								break;
+							}
+						
+							activity.runOnUiThread(
+									new Runnable() {
+										public void run() 
+										{
+											Intent i = new Intent(activity, GeolocationActivity.class);
+									        i.putExtra("user", user);
+											i.putExtra("bars", bars);
+									        i.putExtra("latlng", latlng);
+											startActivity(i);
+										}
+									});
+						}
+					};
+					tr.start();
+					
+				}
+				
+			}
+		});
+		
+		
 		return rootView;
+	}
+	
+
+	
+	@Override
+	public void onLocationChanged(Location location) 
+	{
+		//Es llamado cuando cambia la ubicación
+		float precision = location.getAccuracy();
+		latitude=location.getLatitude();
+		longitude=location.getLongitude();
+	
+		//Comprobar precisión
+		if(precision<precisionMinimaRequerida)
+		{
+			//Tenemos la precisión
+			this.radioGroup.setVisibility(View.VISIBLE);
+			this.showMapButton.setVisibility(View.VISIBLE);
+			this.showProgressBar.setVisibility(View.INVISIBLE);
+			
+			ToastWriter.writeToast("We have found you!", activity.getApplicationContext());
+		}
 	}
 	
 	@Override
 	public void onResume() 
 	{
 		super.onResume();
-		if(googleMap == null)
-		{
-			googleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap(); 
-		}
-
-			final BitmapDescriptor myLocationColour = BitmapDescriptorFactory.defaultMarker(
-			          BitmapDescriptorFactory.HUE_AZURE);
-
-	        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-	        
-	        Thread tr = new Thread(){
-					@Override
-					public void run()
-					{
-	        			final ArrayList<Bar> arrayBar = TortillatorAPITesting.getInstance().getBarsNearsLocation(MY_LOCATION);
-
-						activity.runOnUiThread(
-								new Runnable() {
-									public void run() 
-									{
-								        for(Bar b : arrayBar) 
-								        {
-								        	 LatLng location = new LatLng(b.getLatitude(), b.getLongitude());
-											 Marker m = googleMap.addMarker(new MarkerOptions().position(location).
-													title(b.getName()));
-										}
-								        Marker myLocationMarker = googleMap.addMarker(new MarkerOptions().
-								    	        position(MY_LOCATION).title(myLocationTitle).icon(myLocationColour));
-
-									}
-								});
-					}
-				};
-				tr.start();
-	        
-	        //ArrayList<Bar> arrayBar = TortillatorAPI.getInstance(activity.getApplicationContext()).getBarsNearsLocation(MY_LOCATION);
-	        /*for(Bar b : arrayBar) 
-	        {
-	        	 LatLng location = new LatLng(b.getLatitude(), b.getLongitude());
-				 Marker m = googleMap.addMarker(new MarkerOptions().position(location).
-						title(b.getName()));
-			}*/
-	                
-	      
-	        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MY_LOCATION, 17));
-	        googleMap.setOnMarkerClickListener(new OnMarkerClickListener() 
-	        {	
-	        	@Override
-				public boolean onMarkerClick(Marker marker) 
-				{
-		        	if(!marker.getTitle().equals(myLocationTitle))
-		        	{
-		        		final String title = marker.getTitle();
-		        		Thread tr = new Thread(){
-							@Override
-							public void run()
-							{
-				        		final Bar bar = TortillatorAPITesting.getInstance().getBarByName(title);
-				        		final Tortilla tortilla = TortillatorAPITesting.getInstance().getTortillaByBarId(bar.getId());
-								
-								activity.runOnUiThread(
-										new Runnable() {
-											public void run() 
-											{
-								        		Intent intent = new Intent(activity, BarActivity.class);
-												intent.putExtra("user", user);
-												intent.putExtra("bar", bar);
-												intent.putExtra("tortilla", tortilla);
-												startActivity(intent);
-											}
-										});
-							}
-						};
-						tr.start();
-		        		
-		        		
-		        		
-		        		
-		        		/*Bar bar = TortillatorAPI.getInstance(activity.getApplicationContext()).getBarByName(marker.getTitle());
-		        		Tortilla tortilla = TortillatorAPI.getInstance(activity.getApplicationContext()).getTortillaByBarId(bar.getId());
-		        		Intent intent = new Intent(activity.getApplicationContext(), BarActivity.class);
-						intent.putExtra("user", user);
-						intent.putExtra("bar", bar);
-						intent.putExtra("tortilla", tortilla);
-						startActivity(intent);*/
-		        	}
-					return true;
-				}
-			});
+		//Proveedor de ubicación, refresco mínimo, metros mínimos, listener
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+	
 	}
+	@Override
+	public void onPause() 
+	{
+		super.onPause();
+		//El GPS consume muchos recursos, mejor pararlo cuando no lo vayamos a utilizar
+		lm.removeUpdates(this);
+	}
+	
+	
+	
+	/*public void onClickShow(View v)
+	{
+		if(v.getId() == R.id.ShowMapButton)
+		{
+			final LatLng latlng = new LatLng(latitude, longitude);
+			
+			Thread tr = new Thread(){
+				@Override
+				public void run()
+				{
+					
+					switch (radioGroup.getCheckedRadioButtonId()) {
+					case R.id.showAllBars:
+						bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+						break;
+					case R.id.showRecommendedBarsRadio:
+						//TortillatorAPITesting.getInstance().getRecommendations(user.getUsername());						
+						bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+						break;
+					case R.id.showVotedBarsRadio:
+						//TortillatorAPITesting.getInstance().getUsersTortillas(user.getUsername());
+						bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+						break;
+					default:
+						break;
+					}
+				
+					activity.runOnUiThread(
+							new Runnable() {
+								public void run() 
+								{
+									Intent i = new Intent(activity, GeolocationActivity.class);
+							        i.putExtra("user", user);
+									i.putExtra("bars", bars);
+							        i.putExtra("latlng", latlng);
+									startActivity(i);
+								}
+							});
+				}
+			};
+			tr.start();
+			
+		}
+	}*/
 	@Override
 	public void onStop() 
 	{
 		super.onStop();
-		googleMap = null;
+	}
+	@Override
+	public void onProviderDisabled(String provider) 
+	{
+		//Cuando se deshabilita el GPS
+		
+		//Le reenviamos a los ajustes de GPS de Android
+		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		startActivity(intent);
+		ToastWriter.writeToast("You have to enable the GPS", activity.getApplicationContext());
+	}
+	@Override
+	public void onProviderEnabled(String provider) 
+	{	
+		//Cuando se habilita el GPS
+		ToastWriter.writeToast("The GPS is enabled", activity.getApplicationContext());
+	}
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) 
+	{
+		//Es llamado cuando cambia el estado del GPS
+		switch (status) 
+		{
+			case LocationProvider.OUT_OF_SERVICE:
+				ToastWriter.writeToast("The GPS is not available", activity.getApplicationContext());
+				break;
+			default:
+				break;
+		}
 	}
 
 }

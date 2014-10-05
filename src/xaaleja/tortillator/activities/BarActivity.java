@@ -45,7 +45,7 @@ public class BarActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.bar);
-		
+				
 		bar = (Bar)getIntent().getParcelableExtra("bar");
 		user = (User)getIntent().getParcelableExtra("user");
 		tortilla = (Tortilla)getIntent().getParcelableExtra("tortilla");
