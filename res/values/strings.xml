@@ -41,6 +41,8 @@
     <string name="title_activity_main">Main</string>
     <string name="search_title">Search</string>
     <string name="logout">Logout</string>
+    <string name="gpsNotEnabled">You have to activate your GPS so we can find you</string>
+    <string name="lookingForText">We are looking for you and bars around</string>
 
 
 </resources>

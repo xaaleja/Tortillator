@@ -5,22 +5,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <ProgressBar
-        android:id="@+id/geolocationProgressBar"
-        style="?android:attr/progressBarStyleLarge"
+    <TextView
+        android:id="@+id/geo_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="14dp"
+        android:text="Geolocation"
+        android:textSize="24dp" />
 
     <RadioGroup
         android:id="@+id/showBarsRadioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/geolocationProgressBar"
-        android:layout_marginTop="45dp"
-        android:visibility="invisible" >
+        android:layout_alignLeft="@+id/geo_title"
+        android:layout_below="@+id/geo_title"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="22dp"
+        android:visibility="visible" >
 
         <RadioButton
             android:id="@+id/showAllBars"
@@ -46,11 +50,10 @@
         android:id="@+id/ShowMapButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/geolocationProgressBar"
-        android:layout_alignTop="@+id/geolocationProgressBar"
-        android:layout_marginLeft="34dp"
-        android:layout_marginTop="50dp"
+        android:layout_alignRight="@+id/showBarsRadioGroup"
+        android:layout_below="@+id/showBarsRadioGroup"
+        android:layout_marginTop="22dp"
         android:text="Show"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
 </RelativeLayout>
