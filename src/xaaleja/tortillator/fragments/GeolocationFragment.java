@@ -1,38 +1,29 @@
 package xaaleja.tortillator.fragments;
 
 
-import java.util.ArrayList;
 
 import xaaleja.tortillator.R;
-import xaaleja.tortillator.activities.BarActivity;
-import xaaleja.tortillator.activities.GeolocationActivity;
 import xaaleja.tortillator.activities.LookingForActivity;
-import xaaleja.tortillator.db.TortillatorAPITesting;
-import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.User;
 import xaaleja.tortillator.utils.ToastWriter;
-import xaaleja.tortillator.utils.UtilsImages;
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
 
 
 public class GeolocationFragment extends Fragment implements LocationListener
@@ -42,10 +33,7 @@ public class GeolocationFragment extends Fragment implements LocationListener
 	private RadioGroup radioGroup;
 	private View rootView;
 	private Button showMapButton;
-	private Button enableGPSButton;
-
-	private TextView enableGPSText;
-	
+	private LocationManager lm;	
 
 	public GeolocationFragment()
 	{
@@ -64,42 +52,67 @@ public class GeolocationFragment extends Fragment implements LocationListener
 				false);
 		this.radioGroup = (RadioGroup)rootView.findViewById(R.id.showBarsRadioGroup);
 		this.showMapButton = (Button)rootView.findViewById(R.id.ShowMapButton);
-		this.enableGPSButton = (Button)rootView.findViewById(R.id.gpsNotEnabledButton);
-		this.enableGPSText = (TextView)rootView.findViewById(R.id.gpsNotEnabled);
 
-		
+		this.lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+
 		this.showMapButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) 
 			{
-				int choice = 1;
-				if(v.getId() == R.id.ShowMapButton)
+				if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
 				{
-					switch (radioGroup.getCheckedRadioButtonId()) {
-					case R.id.showAllBars:
-						//bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
-						choice = 1;
-						break;
-					case R.id.showRecommendedBarsRadio:
-						//TortillatorAPITesting.getInstance().getRecommendations(user.getUsername());						
-						//bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
-						choice = 2;
-						break;
-					case R.id.showVotedBarsRadio:
-						//TortillatorAPITesting.getInstance().getUsersTortillas(user.getUsername());
-						//bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
-						choice = 3;
-						break;
-					default:
-						break;
+					int choice = 1;
+					if(v.getId() == R.id.ShowMapButton)
+					{
+						switch (radioGroup.getCheckedRadioButtonId()) {
+						case R.id.showAllBars:
+							//bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+							choice = 1;
+							break;
+						case R.id.showRecommendedBarsRadio:
+							//TortillatorAPITesting.getInstance().getRecommendations(user.getUsername());						
+							//bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+							choice = 2;
+							break;
+						case R.id.showVotedBarsRadio:
+							//TortillatorAPITesting.getInstance().getUsersTortillas(user.getUsername());
+							//bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+							choice = 3;
+							break;
+						default:
+							break;
+						}
+						
+						Intent intent = new Intent(activity, LookingForActivity.class);
+						intent.putExtra("user", user);
+						intent.putExtra("choice", choice);
+						startActivity(intent);
+						
 					}
-					
-					Intent intent = new Intent(activity, LookingForActivity.class);
-					intent.putExtra("user", user);
-					intent.putExtra("choice", choice);
-					startActivity(intent);
-					
+				}
+				else
+				{
+					AlertDialog ad = new AlertDialog.Builder(activity).create();
+					    ad.setCancelable(false);
+					    ad.setTitle("GPS DISABLED");
+					    ad.setMessage("You have to enable your GPS so we can find you. Do you want to enable it?");
+					    ad.setButton(DialogInterface.BUTTON_POSITIVE, "Yes, carry me", new DialogInterface.OnClickListener() {
+
+					        public void onClick(DialogInterface dialog, int which) 
+					        {
+					    		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					    		startActivity(intent);					        }
+					    });
+					    ad.setButton(DialogInterface.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) 
+							{
+								dialog.dismiss();
+							}
+						});
+					ad.show();
 				}
 				
 			}
@@ -163,8 +176,8 @@ public class GeolocationFragment extends Fragment implements LocationListener
 		});
 		settingsDialog.show();*/		
 		
-		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		startActivity(intent);
+		//Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		//startActivity(intent);
 		//ToastWriter.writeToast("You have to enable the GPS", activity.getApplicationContext());
 	}
 	@Override

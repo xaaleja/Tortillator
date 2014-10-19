@@ -21,14 +21,14 @@ import android.widget.ProgressBar;
 public class LookingForActivity extends Activity implements LocationListener
 {
 	private ProgressBar showProgressBar;
-	private int precisionOptima=20;
+	//private int precisionOptima=20;
 	private double latitude;
 	private double longitude;
 	//= new LatLng(43.326729, -3.032551)
 	private LocationManager lm;
-	private int precisionMinimaRequerida =50;
+	private int precisionMinimaRequerida = 70;
 	private User user;
-	private int choice =1;
+	private int choice = 1;
 	private ArrayList<Bar> bars;
 
 	

@@ -1,5 +1,7 @@
 package xaaleja.tortillator.activities;
 
+import com.google.android.gms.internal.ho;
+
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.db.TortillatorAPITesting;
 import xaaleja.tortillator.model.User;
@@ -26,11 +28,6 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 
 		enter = (Button)findViewById(R.id.lo_Enter);
-
-		//Descomentar la llamada de abajo la primera vez que ejecutamos el proyecto para insertar algunos datos de prueba.
-		//Una vez insertados comentar la linea.
-		
-		//this.insertTestData();
 	}
 	
 	public void onClickEnter(View v) {
@@ -100,6 +97,17 @@ public class MainActivity extends Activity
 			Toast.makeText(this, "ERROR al cambiar de actividad", Toast.LENGTH_SHORT).show();
 		}
 	}
+	
+	
+	@Override
+	public void onBackPressed() 
+	{
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();	
+    }
 	
 	/*private void writeToast(String message)
     {

@@ -230,16 +230,17 @@ public class TortillatorAPITesting
 	{
 		ArrayList<Tortilla> tortillas = new ArrayList<Tortilla>();
 		String route = APIRoutes.GET_TORTILLAS_USER+username+"/user.json";
-		
+		HttpClient cliente =new DefaultHttpClient();
+
 		HttpGet httpget = new HttpGet(route);
 		String result=null;
 		
 		HttpResponse response;
 		try {
-			response = client.execute(httpget,context);
+			response = cliente.execute(httpget,context);
 			
 			HttpEntity entity = response.getEntity();
-			result = EntityUtils.toString(entity, "UTF-8");			
+			result = EntityUtils.toString(entity, "UTF-8");
 			if(response.getStatusLine().getStatusCode()!=404)
 			{
 				JSONArray json= new JSONArray(result);
@@ -420,12 +421,15 @@ public class TortillatorAPITesting
 	{
 		ArrayList<Tortilla> tortillas = new ArrayList<Tortilla>();
 		String route = APIRoutes.GET_TORTILLAS_RANKING;
+		HttpClient cliente =new DefaultHttpClient();
+
+		
 		HttpGet httpget = new HttpGet(route);
 		String result=null;
 		
 		HttpResponse response;
 		try {
-			response = client.execute(httpget,context);
+			response = cliente.execute(httpget,context);
 			
 			HttpEntity entity = response.getEntity();
 			result = EntityUtils.toString(entity, "UTF-8");			
@@ -445,20 +449,31 @@ public class TortillatorAPITesting
 	public ArrayList<Tortilla> getRecommendations(String username)
 	{
 		ArrayList<Tortilla> tortillas = new ArrayList<Tortilla>();
+		
+		HttpClient cliente =new DefaultHttpClient();
+
 		String route = APIRoutes.GET_OR_PUT_TORTILLA+username+"/recommendations.json";
 		HttpGet httpget = new HttpGet(route);
 		String result=null;
 		
 		HttpResponse response;
 		try {
-			response = client.execute(httpget,context);
-			
+			response = cliente.execute(httpget,context);
 			HttpEntity entity = response.getEntity();
+			
 			result = EntityUtils.toString(entity, "UTF-8");			
+				
+			String err = response.getStatusLine().getStatusCode()+"";
 			if(response.getStatusLine().getStatusCode()!=404)
 			{
 				JSONArray json= new JSONArray(result);
 				tortillas = TortillaParser.parseTortillas(json);
+				for(Tortilla t : tortillas)
+					Log.e("Tortilla", t.toString());
+			}
+			else
+			{
+				Log.e("ERROR RECOMMENDS", err);
 			}
 		} catch (Exception e) 
 		{

@@ -41,8 +41,13 @@
     <string name="title_activity_main">Main</string>
     <string name="search_title">Search</string>
     <string name="logout">Logout</string>
-    <string name="gpsNotEnabled">You have to activate your GPS so we can find you</string>
+    <string name="gpsNotEnabled">GPS DISABLED</string>
+    <string name="enableGPS">You have to enable your GPS so we can find you. Do you want to enable it?</string>
     <string name="lookingForText">We are looking for you and bars around</string>
+    <string name="no">No</string>
+    <string name="yesCarry">Yes, carry me</string>
+    <string name="noRecommends">There are not recommendations for you now. Try it later.</string>
+    
 
 
 </resources>

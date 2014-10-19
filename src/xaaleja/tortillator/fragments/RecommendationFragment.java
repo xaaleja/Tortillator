@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.activities.BarActivity;
 import xaaleja.tortillator.adapters.ArrayAdapterRecommendations;
@@ -14,6 +16,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 public class RecommendationFragment extends Fragment implements SearchView.OnQueryTextListener,
 SearchView.OnCloseListener
@@ -40,6 +44,7 @@ SearchView.OnCloseListener
 	private ArrayList<Tortilla> arrayRecommendation = new ArrayList<Tortilla>();
 	private HashMap<Integer, String> bars = new HashMap<Integer, String>();
 
+	private TextView noRecommends;
 
 	public RecommendationFragment()
 	{
@@ -85,6 +90,7 @@ SearchView.OnCloseListener
 				false);
 		
 		tortillasRecommendation = (ListView)rootView.findViewById(R.id.re_list);
+		noRecommends = (TextView)rootView.findViewById(R.id.re_noRecommends);
 
 		return rootView;
 	}
@@ -93,25 +99,36 @@ SearchView.OnCloseListener
 	public void onResume() 
 	{
 		super.onResume();
-		
 		Thread tr = new Thread(){
 			@Override
 			public void run()
 			{
 				arrayRecommendation = TortillatorAPITesting.getInstance().getRecommendations(user.getUsername());
-				
-				for(Tortilla t: arrayRecommendation)
+				if(!arrayRecommendation.isEmpty())
 				{
-					String barName = TortillatorAPITesting.getInstance().getBarName(t.getId_bar());
-					bars.put(t.getId_bar(), barName);
+					Log.i("Array not null", "ENTRA");
+					for(Tortilla t: arrayRecommendation)
+					{
+						String barName = TortillatorAPITesting.getInstance().getBarName(t.getId_bar());
+						bars.put(t.getId_bar(), barName);
+					}
 				}
-				
+
 				activity.runOnUiThread(
 						new Runnable() {
 							public void run() 
 							{
-								aare = new ArrayAdapterRecommendations(RecommendationFragment.this.activity, arrayRecommendation, bars);			
-								tortillasRecommendation.setAdapter(aare);
+								if(!arrayRecommendation.isEmpty())
+								{
+									Log.i("Array not null", "ENTRA");
+									aare = new ArrayAdapterRecommendations(RecommendationFragment.this.activity, arrayRecommendation, bars);			
+									tortillasRecommendation.setAdapter(aare);
+								}
+								else
+								{
+									tortillasRecommendation.setVisibility(View.INVISIBLE);
+									noRecommends.setVisibility(View.VISIBLE);
+								}
 							}
 						});
 			}
@@ -171,12 +188,14 @@ SearchView.OnCloseListener
 	{
 		super.onStop();
 		tortillasRecommendation.setAdapter(null);
-		aare.clear();		
+		if(this.aare !=null)	
+			aare.clear();		
 	}
 
 	@Override
 	public boolean onClose() {
-	    aare.filter("");
+		if(this.aare !=null)	
+			aare.filter("");
 
 	    return(true);
 	}
@@ -185,7 +204,8 @@ SearchView.OnCloseListener
 	public boolean onQueryTextChange(String newText) 
 	{
 		String text = newText.toString().toLowerCase(Locale.getDefault());
-		this.aare.filter(text);
+		if(this.aare !=null)	
+			this.aare.filter(text);
 		return(true);
 	}
 
