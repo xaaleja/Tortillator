@@ -54,6 +54,7 @@ public class GeolocationFragment extends Fragment implements LocationListener
 		this.showMapButton = (Button)rootView.findViewById(R.id.ShowMapButton);
 
 		this.lm = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+		
 
 		this.showMapButton.setOnClickListener(new OnClickListener() {
 			
@@ -95,16 +96,17 @@ public class GeolocationFragment extends Fragment implements LocationListener
 				{
 					AlertDialog ad = new AlertDialog.Builder(activity).create();
 					    ad.setCancelable(false);
-					    ad.setTitle("GPS DISABLED");
-					    ad.setMessage("You have to enable your GPS so we can find you. Do you want to enable it?");
-					    ad.setButton(DialogInterface.BUTTON_POSITIVE, "Yes, carry me", new DialogInterface.OnClickListener() {
+					    ad.setTitle(activity.getResources().getString(R.string.gpsNotEnabled));
+					    ad.setMessage(activity.getResources().getString(R.string.enableGPS));
+					    ad.setButton(DialogInterface.BUTTON_POSITIVE, activity.getResources().getString(R.string.yesCarry), new DialogInterface.OnClickListener() {
 
 					        public void onClick(DialogInterface dialog, int which) 
 					        {
 					    		Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-					    		startActivity(intent);					        }
+					    		startActivity(intent);					        
+					    	}
 					    });
-					    ad.setButton(DialogInterface.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+					    ad.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
 							
 							@Override
 							public void onClick(DialogInterface dialog, int which) 
