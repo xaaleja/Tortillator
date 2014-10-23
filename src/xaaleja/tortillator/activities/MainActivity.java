@@ -1,7 +1,5 @@
 package xaaleja.tortillator.activities;
 
-import com.google.android.gms.internal.ho;
-
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.db.TortillatorAPITesting;
 import xaaleja.tortillator.model.User;

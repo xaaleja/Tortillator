@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.Tortilla;
 
 public class TortillaParser 

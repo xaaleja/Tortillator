@@ -2,9 +2,6 @@ package xaaleja.tortillator.fragments;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.activities.BarActivity;
 import xaaleja.tortillator.adapters.ArrayAdapterRecommendations;
