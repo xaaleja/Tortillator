@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -40,7 +41,8 @@ public class BarActivity extends Activity {
 	private Integer yourRating;
 	private RatingBar ratingBar;
 	private TextView numVotes;
-	
+	private Button saveButton;
+	private EditText commentText ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,6 +71,8 @@ public class BarActivity extends Activity {
 		this.comments = (ListView)findViewById(R.id.bar_comments_list);
 		ratingBar = (RatingBar)findViewById(R.id.bar_rating_bar);
 		numVotes = (TextView)findViewById(R.id.bar_num_votes);
+		this.saveButton = (Button)findViewById(R.id.bar_save_button);
+		this.commentText = (EditText)findViewById(R.id.bar_commentT);
 		
 		/*******/
 		Thread tr = new Thread(){
@@ -86,6 +90,8 @@ public class BarActivity extends Activity {
 								{
 									Float ratingFloat = Float.parseFloat(""+yourRating);
 									ratingBar.setRating(ratingFloat/2);
+									commentText.setEnabled(true);
+									saveButton.setEnabled(true);
 								}
 								numVotes.setText(" (" + num+ " votes)");
 								aac = new ArrayAdapterComment(BarActivity.this, arrayComments);
@@ -143,6 +149,8 @@ public class BarActivity extends Activity {
 									{
 										average.setText(" "+String.format("%.1f", tortilla.getAverage()));
 										numVotes.setText(" (" + num + " votes)");
+										saveButton.setEnabled(true);
+										commentText.setEnabled(true);
 
 									}
 								});
@@ -173,7 +181,7 @@ public class BarActivity extends Activity {
 	{
 		if(v.getId() == R.id.bar_save_button)
 		{
-			final EditText commentText = (EditText)findViewById(R.id.bar_commentT);	
+			//final EditText commentText = (EditText)findViewById(R.id.bar_commentT);	
 			if(!commentText.getText().toString().isEmpty())
 			{
 				Thread tr = new Thread(){

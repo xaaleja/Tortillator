@@ -17,7 +17,8 @@
         android:layout_alignLeft="@+id/bar_comment"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/bar_comment"
-        android:ems="10" >
+        android:ems="10"
+        android:enabled="false" >
         
     </EditText>
 
@@ -35,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/bar_commentT"
         android:layout_below="@+id/bar_commentT"
+        android:enabled="false"
         android:onClick="onClickSave"
         android:text="@string/bar_button" />
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import xaaleja.tortillator.R;
 import xaaleja.tortillator.db.TortillatorAPITesting;
+import xaaleja.tortillator.fragments.GeolocationFragment;
 import xaaleja.tortillator.model.Bar;
 import xaaleja.tortillator.model.Tortilla;
 import xaaleja.tortillator.model.User;

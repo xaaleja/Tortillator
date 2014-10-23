@@ -15,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -44,13 +45,14 @@ public class LookingForActivity extends Activity implements LocationListener
 		user = (User)getIntent().getParcelableExtra("user");
 		//choice = getIntent().getIntExtra("choice");
 		choice = getIntent().getIntExtra("choice", 1);
+		Log.i("CHOICE", ""+choice);
 	}
 
 	@Override
 	protected void onResume() 
 	{
 		super.onResume();
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, this);
 
 	}
 	
@@ -88,12 +90,10 @@ public class LookingForActivity extends Activity implements LocationListener
 						bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
 						break;
 					case 2:
-						//TortillatorAPITesting.getInstance().getRecommendations(user.getUsername());						
-						bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+						bars = TortillatorAPITesting.getInstance().getRecommendedBarsNearLocation(user.getUsername(), latlng);
 						break;
 					case 3:
-						//TortillatorAPITesting.getInstance().getUsersTortillas(user.getUsername());
-						bars = TortillatorAPITesting.getInstance().getBarsNearsLocation(latlng);
+						bars = TortillatorAPITesting.getInstance().getVotedBarsNearLocation(user.getUsername(), latlng);
 						break;
 					default:
 						break;

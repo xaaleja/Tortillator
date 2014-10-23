@@ -587,15 +587,66 @@ public class TortillatorAPITesting
 		
 		return votes;		
 	}
+	public ArrayList<Bar> getRecommendedBarsNearLocation(String username, LatLng location)
+	{
+		ArrayList<Bar> bars = new ArrayList<Bar>();
+		String route = APIRoutes.GET_OR_PUT_BAR+username+"/recommendations/"+location.latitude+"/latitudes/"+location.longitude+"/longitude.json";
+		HttpGet httpget = new HttpGet(route);
+		String result=null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONArray json= new JSONArray(result);
+				bars = BarParser.parseBars(json);
+			}
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
+		
+		return bars;	}
+	public ArrayList<Bar> getVotedBarsNearLocation(String username, LatLng location)
+	{
+		ArrayList<Bar> bars = new ArrayList<Bar>();
+		String route = APIRoutes.GET_OR_PUT_BAR+username+"/voteds/"+location.latitude+"/latitudes/"+location.longitude+"/longitude.json";
+		HttpGet httpget = new HttpGet(route);
+		String result=null;
+		
+		HttpResponse response;
+		try {
+			response = client.execute(httpget,context);
+			
+			HttpEntity entity = response.getEntity();
+			result = EntityUtils.toString(entity, "UTF-8");			
+			if(response.getStatusLine().getStatusCode()!=404)
+			{
+				JSONArray json= new JSONArray(result);
+				bars = BarParser.parseBars(json);
+			}
+		} catch (Exception e) 
+		{
+			e.printStackTrace();
+		}	
+		
+		return bars;	}
+	
+	
 	private String post(List<NameValuePair> params, String route)
 	{
 		HttpPost httpPost = new HttpPost(route);
 		HttpResponse response = null;
-		
+		HttpClient cliente =new DefaultHttpClient();
+
 		try
 		{	
 			httpPost.setEntity(new UrlEncodedFormEntity(params));
-			response = client.execute(httpPost);
+			response = cliente.execute(httpPost);
 			HttpEntity entity = response.getEntity();
 			is = entity.getContent();
 		} 
@@ -617,10 +668,12 @@ public class TortillatorAPITesting
 	private void put(List<NameValuePair> params, String route)
 	{
 		HttpPut httpPut = new HttpPut(route);
+		HttpClient cliente =new DefaultHttpClient();
+
 
 		try {
 			httpPut.setEntity(new UrlEncodedFormEntity(params));
-			HttpResponse response = client.execute(httpPut);
+			HttpResponse response = cliente.execute(httpPut);
 
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
